@@ -13,22 +13,23 @@ from django.contrib.auth.password_validation import validate_password
 from django.forms import ValidationError
 from django.templatetags.static import static
 import re,os
-from kullanici.models import User
+from .models import User
 #from django.core.exceptions import ValidationError
 from django.forms import ValidationError
 from django.utils.translation import gettext_lazy as _
 #class LoginForm(forms.)
 class IlIlceChoiceField(forms.ChoiceField):
-
     def validate(self, value):
-        p = static('js/kullanici/il-ilce.txt')
-        #content = p.readlines()
-        with open(p[1:],"r",encoding="utf-8") as f:
-            data = f.read()
-            if value in data:
-                return value
-            else:
-                raise ValidationError("Lütfen Doğru Seçim Yapınız")
+        pass
+    # def validate(self, value):
+    #     p = static('js/kullanici/il-ilce.txt')
+    #     #content = p.readlines()
+    #     with open(p[1:],"r",encoding="utf-8") as f:
+    #         data = f.read()
+    #         if value in data:
+    #             return value
+    #         else:
+    #             raise ValidationError("Lütfen Doğru Seçim Yapınız")
              
 class RegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=20,label="İsim")
@@ -103,14 +104,14 @@ class RegisterForm(UserCreationForm):
 
         return phone.replace("-","")
 
-    def clean_email(self):
-
-        email = self.cleaned_data["email"]
-        email = value.lower()
-        if User.objects.filter(email=email).exists():
-
-            raise forms.ValidationError("Email Sistemde Kayıtlı.")
-        return email
+    # def clean_email(self):
+    #
+    #     email = self.cleaned_data["email"]
+    #     email = value.lower()
+    #     if User.objects.filter(email=email).exists():
+    #
+    #         raise forms.ValidationError("Email Sistemde Kayıtlı.")
+    #     return email
 
 
 class LoginForm(forms.Form):
@@ -119,23 +120,28 @@ class LoginForm(forms.Form):
     password = forms.CharField(required=True,max_length=40,label="Password",
                             widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Şifrenizi Giriniz'}))
 
-    def clean(self):
-        email = self.cleaned_data.get("email")
-        password = self.cleaned_data.get("password")
+    # def clean(self):
+    #     email = self.cleaned_data.get("email")
+    #     password = self.cleaned_data.get("password")
+    #     validate_email(email)
+    def clean_email(self):
+        email = self.cleaned_data.get("email").strip()
         validate_email(email)
+        return email
+    def clean_password(self):
+        password = self.cleaned_data.get("password")
         validate_password(password)
-        user = None
-        if User.objects.filter(email=email).exists():
-            user = User.objects.get(email=email)
-        if not user :
-            raise forms.ValidationError("Bu Bilgilerde kullanıcı bulunamadı")
-
-        kullanici = authenticate(username=user.username,password=password)
+        return password
 
 
 
-        if not kullanici :
-            raise forms.ValidationError("Bu Bilgilerde kullanıcı bulunamadı")
+
+
+
+
+
+
+
 
 
 class ProfilUpdateForm(forms.ModelForm):
@@ -145,10 +151,10 @@ class ProfilUpdateForm(forms.ModelForm):
     #                        widget=forms.PasswordInput())
     il = IlIlceChoiceField(label="İl")
     ilce = IlIlceChoiceField(label="İlçe",widget=forms.Select())
-    image = forms.ImageField()
+    resim = forms.ImageField()
     class Meta:
         model = User
-        fields = ['image','first_name','last_name','email','phone','il','ilce','adres']
+        fields = ['resim','first_name','last_name','email','phone','il','ilce','adres']
 
 
 
@@ -159,7 +165,7 @@ class ProfilUpdateForm(forms.ModelForm):
             #self.fields[field].required = False
 
 
-        self.fields["image"].required = False
+        self.fields["resim"].required = False
         self.fields["first_name"].widget.attrs["placeholder"] = "Adınız"
         self.fields["last_name"].widget.attrs["placeholder"] = "Soyadınız"
         #self.fields["password"].widget.attrs["placeholder"] = "Yeni Şifre"

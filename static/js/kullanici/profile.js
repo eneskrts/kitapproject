@@ -11,7 +11,7 @@ $(document).ready(function(){
 
         $.each(sonuc, function(index, value){
             var row="";
-            //console.log("zxcxc"+value.il);
+            console.log("zxcxc"+value.il);
                 if(value.il==ilpost){
                     row +='<option selected value="'+value.il+'">'+value.il+'</option>';
                     $("#id_il").append(row);
@@ -19,7 +19,7 @@ $(document).ready(function(){
 
                         console.log(ilcepost);
                         $("#id_ilce").attr("disabled", false).html("<option value=''>İlçe Seçiniz</option>");
-                                $.getJSON("../static/js/kullanici/il-ilce.json", function(sonuc){
+                                $.getJSON("../../static/js/kullanici/il-ilce.json", function(sonuc){
                                     $.each(sonuc, function(index, valuee){
                                         var row="";
                                         if(valuee.il==ilpost)

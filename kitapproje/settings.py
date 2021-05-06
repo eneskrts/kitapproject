@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'allauth.account',
 
     'crispy_forms',
+    'direct',
 
 ]
 SITE_ID = 1
@@ -146,6 +147,15 @@ EMAIL_HOST_PASSWORD = 'Samsung799@?'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication'
-    ]
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
+    ],
+
 }
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]

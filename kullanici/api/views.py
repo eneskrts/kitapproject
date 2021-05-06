@@ -1,5 +1,6 @@
-from rest_framework.generics import ListAPIView,CreateAPIView,RetrieveAPIView
-from .serializers import RegisterSerializer
+from rest_framework.generics import ListAPIView,CreateAPIView,RetrieveAPIView,RetrieveUpdateAPIView,get_object_or_404
+from .serializers import RegisterSerializer,UserSerializer
+
 from kullanici.models import User
 from .permissions import NotAuthenticated
 from rest_framework.response import Response
@@ -32,3 +33,15 @@ class TestApiView(ListAPIView):
 
     # def put(self,request,*args,**kwargs):
     #     return self.update(request,*args,**kwargs)
+
+class ProfileAPIView(RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset,id=self.request.user.id)
+        return obj
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user)
